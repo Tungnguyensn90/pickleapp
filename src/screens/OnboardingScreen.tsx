@@ -347,7 +347,6 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
             <View style={styles.getStartedGradient}>
               <Text style={styles.getStartedText}>Start Playing</Text>
-              <Text style={styles.arrowText}>→</Text>
             </View>
           </TouchableOpacity>
         ) : (
@@ -367,14 +366,19 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     position: 'absolute',
-    top: 60,
+    top: 40,
     right: 20,
     zIndex: 1,
     padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   skipText: {
     ...FONT_STYLES.CHIBI_BUTTON,
-    color: '#666666',
+    color: '#000000',
+    fontWeight: 'bold',
   },
   page: {
     width,
@@ -547,10 +551,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
     paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 25,
+    borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -562,8 +566,7 @@ const styles = StyleSheet.create({
   },
   nextText: {
     ...FONT_STYLES.CHIBI_BUTTON,
-    color: '#4A90E2',
-    marginRight: 8,
+    color: '#000000',
   },
   getStartedButton: {
     borderRadius: 25,
@@ -581,14 +584,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 25,
+
+    borderRadius: 16,
     backgroundColor: '#4A90E2',
   },
   getStartedText: {
     ...FONT_STYLES.CHIBI_BUTTON,
     color: '#FFFFFF',
-    marginRight: 8,
   },
   arrowText: {
     fontSize: 20,
