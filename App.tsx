@@ -9,6 +9,8 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import SplashScreen from './src/screens/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import LoginScreen from './src/screens/auth/SignInScreen';
+
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -42,6 +44,8 @@ function App() {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'} 
         backgroundColor="#4A90E2"
       />
+
+      <LoginScreen />
       {/* Main app content will go here */}
     </>
   );

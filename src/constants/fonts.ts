@@ -1,7 +1,7 @@
 // Chibi-style font families
 export const FONTS = {
   // Primary chibi font - cute and rounded
-  CHIBI_PRIMARY: 'Comic Sans MS',
+  CHIBI_PRIMARY: 'Manrope',
   
   // Secondary chibi font - playful
   CHIBI_SECONDARY: 'Marker Felt',
