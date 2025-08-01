@@ -1,97 +1,89 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# PickleMatch App
 
-# Getting Started
+A React Native mobile application for pickleball players to find courts, connect with other players, and join clubs.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Recent Updates
 
-## Step 1: Start Metro
+### UI/UX Improvements
+- **Sign-in & Sign-up Screens**: Updated with warm orange/yellow gradient background and teal accents matching the design
+- **Professional Bottom Navigation**: Redesigned with modern styling, active states, and proper spacing
+- **StatusBar Fix**: Resolved header overlap issues with proper SafeAreaView implementation
+- **Color Scheme**: Implemented consistent color palette:
+  - Primary: Orange (#FF8C42) and Yellow (#FFD700) gradient
+  - Accent: Teal (#008080)
+  - Background: Light beige (#F5F5DC)
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### Technical Improvements
+- Added react-native-linear-gradient for gradient backgrounds
+- Fixed StatusBar configuration for proper display
+- Enhanced navigation with professional styling
+- Improved form inputs with better visual feedback
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Features
 
-```sh
-# Using npm
-npm start
+- **Authentication**: Sign-in and sign-up with email/password
+- **Social Login**: Google and Facebook integration
+- **Navigation**: Professional bottom tab navigation
+- **Home Screen**: Quick actions, recent activity, and featured courts
+- **Responsive Design**: Works on both iOS and Android
 
-# OR using Yarn
-yarn start
+## Getting Started
+
+1. Install dependencies:
+```bash
+npm install
 ```
 
-## Step 2: Build and run your app
+2. Run the app:
+```bash
+# For Android
+npx react-native run-android
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+# For iOS
+npx react-native run-ios
 ```
 
-### iOS
+## Dependencies
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+- React Native
+- react-native-linear-gradient
+- react-hook-form
+- TypeScript
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Project Structure
 
-```sh
-bundle install
+```
+src/
+├── screens/
+│   ├── auth/
+│   │   ├── SignInScreen.tsx
+│   │   └── SignUpScreen.tsx
+│   ├── tabs/
+│   │   ├── HomeTab.tsx
+│   │   ├── ClubsTab.tsx
+│   │   ├── SearchTab.tsx
+│   │   ├── ShopTab.tsx
+│   │   └── ChatTab.tsx
+│   └── MainScreen.tsx
+└── constants/
+    └── fonts.ts
 ```
 
-Then, and every time you update your native dependencies, run:
+## Design System
 
-```sh
-bundle exec pod install
-```
+### Colors
+- **Primary Gradient**: Orange (#FF8C42) to Yellow (#FFD700)
+- **Accent**: Teal (#008080)
+- **Background**: Light beige (#F5F5DC)
+- **Text**: Dark gray (#333)
+- **Secondary Text**: Medium gray (#666)
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Typography
+- **Headings**: Bold, 24-28px
+- **Body**: Regular, 14-16px
+- **Captions**: Light, 11-12px
 
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### Components
+- **Buttons**: Rounded corners (30px), shadows, teal background
+- **Inputs**: Light beige background, rounded corners (12px)
+- **Cards**: White background, subtle shadows, rounded corners

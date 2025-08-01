@@ -9,6 +9,7 @@ import {
     Alert,
     ScrollView,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { useForm, Controller } from 'react-hook-form';
 
 interface SignUpScreenProps {
@@ -27,7 +28,6 @@ type FormData = {
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthenticate }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [agreed, setAgreed] = useState(false);
 
     const {
         control,
@@ -47,10 +47,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
     const password = watch('password');
 
     const onSubmit = (data: FormData) => {
-        if (!agreed) {
-            Alert.alert('You must agree to the terms before signing up.');
-            return;
-        }
         if (data.password !== data.confirmPassword) {
             Alert.alert('Passwords do not match.');
             return;
@@ -60,9 +56,19 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.container}>
+        <View style={styles.container}>
+            {/* Gradient Background */}
+            <LinearGradient
+                colors={['#FF8C42', '#FFD700']}
+                style={styles.gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            />
+            
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                {/* Logo Section */}
                 <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
+
                 <Text style={styles.title}>Create your account</Text>
 
                 {/* First Name Field */}
@@ -76,7 +82,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your first name"
-                                placeholderTextColor="#999"
+                                placeholderTextColor="#FF8C42"
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
@@ -98,7 +104,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your last name"
-                                placeholderTextColor="#999"
+                                placeholderTextColor="#FF8C42"
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
@@ -126,7 +132,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your email address"
-                                placeholderTextColor="#999"
+                                placeholderTextColor="#FF8C42"
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
@@ -156,7 +162,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                                 <TextInput
                                     style={styles.passwordInput}
                                     placeholder="Enter your password"
-                                    placeholderTextColor="#999"
+                                    placeholderTextColor="#FF8C42"
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -168,7 +174,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                             onPress={() => setShowPassword(!showPassword)}
                             style={styles.eyeIcon}
                         >
-                            <Text>{showPassword ? '🙈' : '👁️'}</Text>
+                            <Text style={styles.eyeIconText}>👁️</Text>
                         </TouchableOpacity>
                     </View>
                     {errors.password && (
@@ -191,7 +197,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                                 <TextInput
                                     style={styles.passwordInput}
                                     placeholder="Confirm your password"
-                                    placeholderTextColor="#999"
+                                    placeholderTextColor="#FF8C42"
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
@@ -203,26 +209,12 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                             onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                             style={styles.eyeIcon}
                         >
-                            <Text>{showConfirmPassword ? '🙈' : '👁️'}</Text>
+                            <Text style={styles.eyeIconText}>👁️</Text>
                         </TouchableOpacity>
                     </View>
                     {errors.confirmPassword && (
                         <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
                     )}
-                </View>
-
-                {/* Checkbox */}
-                <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
-                        style={styles.checkbox}
-                        onPress={() => setAgreed(!agreed)}
-                    >
-                        {agreed ? <Text style={styles.checkmark}>✔</Text> : null}
-                    </TouchableOpacity>
-                    <Text style={styles.checkboxText}>
-                        I've read and agreed to <Text style={styles.link}>User Agreement</Text> and{' '}
-                        <Text style={styles.link}>Privacy Policy</Text>
-                    </Text>
                 </View>
 
                 {/* Sign Up Button */}
@@ -231,7 +223,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                 </TouchableOpacity>
 
                 {/* Divider */}
-                <Text style={styles.dividerText}>or sign up with</Text>
+                <Text style={styles.dividerText}>OR SIGN UP WITH</Text>
 
                 {/* Social */}
                 <View style={styles.socialContainer}>
@@ -247,142 +239,214 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthe
                 <Text style={styles.signInText}>
                     Already have an account? <Text style={styles.link} onPress={onNavigateToSignIn}>Sign In</Text>
                 </Text>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    scrollContainer: {
-        flexGrow: 1,
+    logo: {
+        width: 220,
+        height: 220,
+        resizeMode: 'contain',
     },
     container: {
         flex: 1,
-        backgroundColor: '#F9FAF8',
+    },
+    gradient: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+    },
+    scrollContainer: {
+        flexGrow: 1,
         paddingHorizontal: 24,
-        paddingTop: 40,
+        paddingTop: 60,
         paddingBottom: 40,
         alignItems: 'center',
     },
-    logo: {
-        width: 120,
-        height: 120,
-        marginBottom: 20,
-        resizeMode: 'contain',
+    logoSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 30,
+        width: '100%',
+        justifyContent: 'space-between',
+    },
+    logoContainer: {
+        alignItems: 'center',
+    },
+    logoText: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#FF8C42',
+        marginBottom: -5,
+    },
+    logoSubText: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#FF8C42',
+    },
+    logoGraphics: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    speedObject: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    yellowCircle: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: '#FFD700',
+        borderWidth: 2,
+        borderColor: '#FF8C42',
+    },
+    orangeStreaks: {
+        width: 30,
+        height: 8,
+        backgroundColor: '#FF8C42',
+        borderRadius: 4,
+        marginLeft: -5,
+    },
+    smallYellowCircle: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: '#FFD700',
+        borderWidth: 1,
+        borderColor: '#FF8C42',
+    },
+    avatarContainer: {
+        marginLeft: 20,
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: '#FFD700',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FF8C42',
+    },
+    avatarText: {
+        fontSize: 24,
     },
     title: {
         fontSize: 28,
-        fontWeight: '600',
-        color: '#004D40',
+        fontWeight: 'bold',
+        color: '#008080',
         marginBottom: 30,
+        textAlign: 'center',
     },
     inputGroup: {
         width: '100%',
-        marginBottom: 12,
+        marginBottom: 20,
     },
     label: {
         fontSize: 16,
-        marginBottom: 4,
-        color: '#333',
+        marginBottom: 8,
+        color: '#008080',
         fontWeight: '600',
     },
     input: {
-        backgroundColor: '#fff',
-        padding: 14,
-        borderRadius: 8,
-        borderColor: '#ccc',
-        borderWidth: 2,
-        fontSize: 14,
+        backgroundColor: '#F5F5DC',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 0,
+        fontSize: 16,
+        color: '#333',
     },
     passwordContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        borderWidth: 2,
-        borderColor: '#ccc',
+        backgroundColor: '#F5F5DC',
+        borderRadius: 12,
+        borderWidth: 0,
     },
     passwordInput: {
         flex: 1,
-        padding: 14,
-        fontSize: 14,
+        padding: 16,
+        fontSize: 16,
+        color: '#333',
     },
     eyeIcon: {
-        paddingHorizontal: 12,
+        paddingHorizontal: 16,
     },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        marginBottom: 16,
-        width: '100%',
-    },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderWidth: 2,
-        borderColor: '#ccc',
-        borderRadius: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 8,
-        marginTop: 4,
-    },
-    checkmark: {
-        color: '#004D40',
-        fontSize: 14,
-    },
-    checkboxText: {
-        flex: 1,
-        color: '#333',
-        fontSize: 13,
-    },
-    link: {
-        color: '#004D40',
-        fontWeight: '500',
-        textDecorationLine: 'underline',
+    eyeIconText: {
+        fontSize: 20,
     },
     signUpButton: {
-        backgroundColor: '#004D40',
+        backgroundColor: '#008080',
         width: '100%',
-        paddingVertical: 14,
+        paddingVertical: 16,
         borderRadius: 30,
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 30,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     signUpText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '500',
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     dividerText: {
-        color: '#777',
-        marginBottom: 14,
-        fontSize: 13,
+        color: '#999',
+        marginBottom: 20,
+        fontSize: 14,
+        textAlign: 'center',
+        fontWeight: '500',
     },
     socialContainer: {
         flexDirection: 'row',
-        gap: 16,
-        marginBottom: 24,
+        justifyContent: 'center',
+        gap: 20,
+        marginBottom: 30,
     },
     socialButton: {
-        backgroundColor: '#fff',
-        borderRadius: 30,
-        padding: 2,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginHorizontal: 10,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     socialIcon: {
-        width: 36,
-        height: 36,
+        width: 30,
+        height: 30,
         resizeMode: 'contain',
     },
     signInText: {
-        fontSize: 13,
-        color: '#333',
+        fontSize: 14,
+        color: '#999',
+        textAlign: 'center',
+    },
+    link: {
+        color: '#008080',
+        fontWeight: '600',
+        textDecorationLine: 'underline',
     },
     errorText: {
-        color: 'red',
+        color: '#FF6B6B',
         fontSize: 12,
         marginTop: 4,
     },

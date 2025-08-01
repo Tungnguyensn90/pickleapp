@@ -7,12 +7,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from './src/screens/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import SignInScreen from './src/screens/auth/SignInScreen';
 import SignUpScreen from './src/screens/auth/SignUpScreen';
 import MainScreen from './src/screens/MainScreen';
-
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -56,20 +57,23 @@ function App() {
   }
 
   return (
-    <>
-      <StatusBar 
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'} 
-        backgroundColor="#4A90E2"
-      />
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <StatusBar 
+          barStyle="light-content" 
+          backgroundColor="transparent"
+          translucent={true}
+        />
 
-      {isAuthenticated ? (
-        <MainScreen />
-      ) : currentScreen === 'signin' ? (
-        <SignInScreen onNavigateToSignUp={handleNavigateToSignUp} onAuthenticate={handleAuthentication} />
-      ) : (
-        <SignUpScreen onNavigateToSignIn={handleNavigateToSignIn} onAuthenticate={handleAuthentication} />
-      )}
-    </>
+        {isAuthenticated ? (
+          <MainScreen />
+        ) : currentScreen === 'signin' ? (
+          <SignInScreen onNavigateToSignUp={handleNavigateToSignUp} onAuthenticate={handleAuthentication} />
+        ) : (
+          <SignUpScreen onNavigateToSignIn={handleNavigateToSignIn} onAuthenticate={handleAuthentication} />
+        )}
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 

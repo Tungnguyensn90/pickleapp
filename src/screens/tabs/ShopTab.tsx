@@ -4,148 +4,40 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ShopTab: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Shop Header */}
-      <View style={styles.shopHeader}>
-        <Text style={styles.shopTitle}>Pickleball Shop</Text>
-        <Text style={styles.shopSubtitle}>Premium equipment and gear</Text>
-      </View>
-
-      {/* Categories */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Categories</Text>
-        <View style={styles.categoriesContainer}>
-          <TouchableOpacity style={styles.categoryCard}>
-            <Text style={styles.categoryIcon}>🏓</Text>
-            <Text style={styles.categoryTitle}>Paddles</Text>
-            <Text style={styles.categorySubtitle}>Professional & beginner</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.categoryCard}>
-            <Text style={styles.categoryIcon}>🎾</Text>
-            <Text style={styles.categoryTitle}>Balls</Text>
-            <Text style={styles.categorySubtitle}>Indoor & outdoor</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.categoryCard}>
-            <Text style={styles.categoryIcon}>👕</Text>
-            <Text style={styles.categoryTitle}>Apparel</Text>
-            <Text style={styles.categorySubtitle}>Performance wear</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.categoryCard}>
-            <Text style={styles.categoryIcon}>👟</Text>
-            <Text style={styles.categoryTitle}>Shoes</Text>
-            <Text style={styles.categorySubtitle}>Court shoes</Text>
-          </TouchableOpacity>
+    <ScrollView 
+      style={[styles.container, { paddingTop: insets.top }]} 
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.content}>
+        <Text style={styles.title}>Shop</Text>
+        <Text style={styles.subtitle}>Get the best pickleball gear</Text>
+        
+        <View style={styles.productCard}>
+          <Text style={styles.productIcon}>🏓</Text>
+          <Text style={styles.productTitle}>Premium Paddles</Text>
+          <Text style={styles.productDescription}>High-quality pickleball paddles</Text>
+          <Text style={styles.productPrice}>From $89.99</Text>
         </View>
-      </View>
-
-      {/* Featured Products */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Featured Products</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <TouchableOpacity style={styles.productCard}>
-            <View style={styles.productImage}>
-              <Text style={styles.productImageText}>🏓</Text>
-            </View>
-            <Text style={styles.productName}>Pro Paddle Elite</Text>
-            <Text style={styles.productPrice}>$89.99</Text>
-            <Text style={styles.productRating}>⭐ 4.8 (124 reviews)</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.productCard}>
-            <View style={styles.productImage}>
-              <Text style={styles.productImageText}>🎾</Text>
-            </View>
-            <Text style={styles.productName}>Tournament Balls (12pk)</Text>
-            <Text style={styles.productPrice}>$24.99</Text>
-            <Text style={styles.productRating}>⭐ 4.6 (89 reviews)</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.productCard}>
-            <View style={styles.productImage}>
-              <Text style={styles.productImageText}>👕</Text>
-            </View>
-            <Text style={styles.productName}>Performance Shirt</Text>
-            <Text style={styles.productPrice}>$34.99</Text>
-            <Text style={styles.productRating}>⭐ 4.7 (56 reviews)</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
-      {/* Deals */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Today's Deals</Text>
-        <View style={styles.dealsList}>
-          <TouchableOpacity style={styles.dealCard}>
-            <View style={styles.dealBadge}>
-              <Text style={styles.dealBadgeText}>-20%</Text>
-            </View>
-            <View style={styles.dealImage}>
-              <Text style={styles.dealImageText}>🏓</Text>
-            </View>
-            <View style={styles.dealInfo}>
-              <Text style={styles.dealName}>Beginner Paddle Set</Text>
-              <Text style={styles.dealPrice}>
-                <Text style={styles.originalPrice}>$59.99</Text>
-                <Text style={styles.discountPrice}> $47.99</Text>
-              </Text>
-              <Text style={styles.dealTime}>Ends in 6 hours</Text>
-            </View>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.dealCard}>
-            <View style={styles.dealBadge}>
-              <Text style={styles.dealBadgeText}>-15%</Text>
-            </View>
-            <View style={styles.dealImage}>
-              <Text style={styles.dealImageText}>👟</Text>
-            </View>
-            <View style={styles.dealInfo}>
-              <Text style={styles.dealName}>Court Shoes Pro</Text>
-              <Text style={styles.dealPrice}>
-                <Text style={styles.originalPrice}>$129.99</Text>
-                <Text style={styles.discountPrice}> $110.49</Text>
-              </Text>
-              <Text style={styles.dealTime}>Ends in 12 hours</Text>
-            </View>
-          </TouchableOpacity>
+        
+        <View style={styles.productCard}>
+          <Text style={styles.productIcon}>👟</Text>
+          <Text style={styles.productTitle}>Court Shoes</Text>
+          <Text style={styles.productDescription}>Comfortable court footwear</Text>
+          <Text style={styles.productPrice}>From $129.99</Text>
         </View>
-      </View>
-
-      {/* My Orders */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>My Orders</Text>
-        <View style={styles.ordersList}>
-          <TouchableOpacity style={styles.orderCard}>
-            <View style={styles.orderIcon}>
-              <Text style={styles.orderIconText}>📦</Text>
-            </View>
-            <View style={styles.orderInfo}>
-              <Text style={styles.orderTitle}>Order #12345</Text>
-              <Text style={styles.orderDate}>March 10, 2024</Text>
-              <Text style={styles.orderStatus}>🟢 Delivered</Text>
-            </View>
-            <Text style={styles.orderTotal}>$89.99</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.orderCard}>
-            <View style={styles.orderIcon}>
-              <Text style={styles.orderIconText}>🚚</Text>
-            </View>
-            <View style={styles.orderInfo}>
-              <Text style={styles.orderTitle}>Order #12344</Text>
-              <Text style={styles.orderDate}>March 8, 2024</Text>
-              <Text style={styles.orderStatus}>🟡 In Transit</Text>
-            </View>
-            <Text style={styles.orderTotal}>$47.99</Text>
-          </TouchableOpacity>
+        
+        <View style={styles.productCard}>
+          <Text style={styles.productIcon}>🎽</Text>
+          <Text style={styles.productTitle}>Sportswear</Text>
+          <Text style={styles.productDescription}>Performance athletic wear</Text>
+          <Text style={styles.productPrice}>From $49.99</Text>
         </View>
       </View>
     </ScrollView>
@@ -157,202 +49,55 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F9FA',
   },
-  shopHeader: {
+  content: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10,
   },
-  shopTitle: {
-    fontSize: 24,
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#008080',
     marginBottom: 8,
   },
-  shopSubtitle: {
+  subtitle: {
     fontSize: 16,
-    color: '#6C757D',
-  },
-  section: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 15,
-  },
-  categoriesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  categoryCard: {
-    width: '48%',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  categoryIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  categoryTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 4,
-  },
-  categorySubtitle: {
-    fontSize: 12,
-    color: '#6C757D',
-    textAlign: 'center',
+    color: '#666',
+    marginBottom: 30,
   },
   productCard: {
-    width: 180,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 15,
-    marginRight: 15,
+    padding: 20,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E9ECEF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
-  productImage: {
-    width: '100%',
-    height: 120,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+  productIcon: {
+    fontSize: 40,
     marginBottom: 10,
   },
-  productImageText: {
-    fontSize: 40,
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 4,
-  },
-  productPrice: {
+  productTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#6F42C1',
+    color: '#FF8C42',
     marginBottom: 4,
   },
-  productRating: {
-    fontSize: 12,
-    color: '#6C757D',
-  },
-  dealsList: {
-    gap: 15,
-  },
-  dealCard: {
-    flexDirection: 'row',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 15,
-    position: 'relative',
-  },
-  dealBadge: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#DC3545',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  dealBadgeText: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  dealImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#E9ECEF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  dealImageText: {
-    fontSize: 24,
-  },
-  dealInfo: {
-    flex: 1,
-  },
-  dealName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 4,
-  },
-  dealPrice: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  originalPrice: {
-    color: '#6C757D',
-    textDecorationLine: 'line-through',
-  },
-  discountPrice: {
-    color: '#DC3545',
-    fontWeight: 'bold',
-  },
-  dealTime: {
-    fontSize: 12,
-    color: '#ADB5BD',
-  },
-  ordersList: {
-    gap: 12,
-  },
-  orderCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 15,
-  },
-  orderIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#E9ECEF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  orderIconText: {
-    fontSize: 20,
-  },
-  orderInfo: {
-    flex: 1,
-  },
-  orderTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 2,
-  },
-  orderDate: {
+  productDescription: {
     fontSize: 14,
-    color: '#6C757D',
-    marginBottom: 2,
+    color: '#666',
+    marginBottom: 8,
   },
-  orderStatus: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  orderTotal: {
+  productPrice: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#6F42C1',
+    fontWeight: '600',
+    color: '#008080',
   },
 });
 

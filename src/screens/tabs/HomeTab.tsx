@@ -7,10 +7,16 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HomeTab: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={[styles.container, { paddingTop: insets.top }]} 
+      showsVerticalScrollIndicator={false}
+    >
       {/* Welcome Section */}
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeTitle}>Welcome to PickleMatch!</Text>
@@ -125,16 +131,18 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
     marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
   },
   welcomeTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#008080',
     marginBottom: 8,
   },
   welcomeSubtitle: {
     fontSize: 16,
-    color: '#6C757D',
+    color: '#666',
   },
   section: {
     padding: 20,
@@ -144,7 +152,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#008080',
     marginBottom: 15,
   },
   quickActions: {
@@ -153,11 +161,13 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5DC',
     borderRadius: 12,
     padding: 15,
     marginHorizontal: 5,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFD700',
   },
   actionIcon: {
     fontSize: 32,
@@ -166,12 +176,12 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#FF8C42',
     marginBottom: 4,
   },
   actionSubtitle: {
     fontSize: 12,
-    color: '#6C757D',
+    color: '#666',
     textAlign: 'center',
   },
   activityList: {
@@ -185,10 +195,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E9ECEF',
+    backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#FF8C42',
   },
   activityIconText: {
     fontSize: 18,
@@ -199,17 +211,17 @@ const styles = StyleSheet.create({
   activityTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#495057',
+    color: '#333',
     marginBottom: 2,
   },
   activitySubtitle: {
     fontSize: 14,
-    color: '#6C757D',
+    color: '#666',
     marginBottom: 2,
   },
   activityTime: {
     fontSize: 12,
-    color: '#ADB5BD',
+    color: '#999',
   },
   courtCard: {
     width: 200,
@@ -219,15 +231,25 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderWidth: 1,
     borderColor: '#E9ECEF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
   courtImage: {
     width: '100%',
     height: 100,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5DC',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#FFD700',
   },
   courtImageText: {
     fontSize: 40,
@@ -235,17 +257,18 @@ const styles = StyleSheet.create({
   courtName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#008080',
     marginBottom: 4,
   },
   courtLocation: {
     fontSize: 14,
-    color: '#6C757D',
+    color: '#666',
     marginBottom: 8,
   },
   courtStatus: {
     fontSize: 12,
     fontWeight: '500',
+    color: '#FF8C42',
   },
 });
 

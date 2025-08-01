@@ -4,136 +4,40 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ClubsTab: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header Section */}
-      <View style={styles.headerSection}>
-        <Text style={styles.headerTitle}>Pickleball Clubs</Text>
-        <Text style={styles.headerSubtitle}>Join clubs and connect with players</Text>
-      </View>
-
-      {/* Featured Clubs */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Featured Clubs</Text>
-        <View style={styles.clubsList}>
-          <TouchableOpacity style={styles.clubCard}>
-            <View style={styles.clubImage}>
-              <Text style={styles.clubImageText}>🏆</Text>
-            </View>
-            <View style={styles.clubInfo}>
-              <Text style={styles.clubName}>PicklePro Elite</Text>
-              <Text style={styles.clubLocation}>Downtown • 156 members</Text>
-              <Text style={styles.clubDescription}>Professional training and tournaments</Text>
-              <View style={styles.clubStats}>
-                <Text style={styles.clubStat}>⭐ 4.8</Text>
-                <Text style={styles.clubStat}>🎾 12 courts</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.clubCard}>
-            <View style={styles.clubImage}>
-              <Text style={styles.clubImageText}>🏆</Text>
-            </View>
-            <View style={styles.clubInfo}>
-              <Text style={styles.clubName}>Riverside Pickleball</Text>
-              <Text style={styles.clubLocation}>Riverside • 89 members</Text>
-              <Text style={styles.clubDescription}>Friendly community for all levels</Text>
-              <View style={styles.clubStats}>
-                <Text style={styles.clubStat}>⭐ 4.6</Text>
-                <Text style={styles.clubStat}>🎾 6 courts</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.clubCard}>
-            <View style={styles.clubImage}>
-              <Text style={styles.clubImageText}>🏆</Text>
-            </View>
-            <View style={styles.clubInfo}>
-              <Text style={styles.clubName}>Westside Warriors</Text>
-              <Text style={styles.clubLocation}>Westside • 203 members</Text>
-              <Text style={styles.clubDescription}>Competitive league and training</Text>
-              <View style={styles.clubStats}>
-                <Text style={styles.clubStat}>⭐ 4.9</Text>
-                <Text style={styles.clubStat}>🎾 8 courts</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+    <ScrollView 
+      style={[styles.container, { paddingTop: insets.top }]} 
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.content}>
+        <Text style={styles.title}>Clubs</Text>
+        <Text style={styles.subtitle}>Find and join pickleball clubs near you</Text>
+        
+        <View style={styles.clubCard}>
+          <Text style={styles.clubIcon}>🏆</Text>
+          <Text style={styles.clubName}>PicklePro Club</Text>
+          <Text style={styles.clubLocation}>Downtown • 45 members</Text>
+          <Text style={styles.clubStatus}>🟢 Active now</Text>
         </View>
-      </View>
-
-      {/* My Clubs */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>My Clubs</Text>
-        <View style={styles.myClubsList}>
-          <TouchableOpacity style={styles.myClubCard}>
-            <View style={styles.myClubIcon}>
-              <Text style={styles.myClubIconText}>🏆</Text>
-            </View>
-            <View style={styles.myClubInfo}>
-              <Text style={styles.myClubName}>PicklePro Elite</Text>
-              <Text style={styles.myClubRole}>Member • 2 years</Text>
-              <Text style={styles.myClubActivity}>Last activity: 2 days ago</Text>
-            </View>
-            <View style={styles.myClubBadge}>
-              <Text style={styles.myClubBadgeText}>Active</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.myClubCard}>
-            <View style={styles.myClubIcon}>
-              <Text style={styles.myClubIconText}>🏆</Text>
-            </View>
-            <View style={styles.myClubInfo}>
-              <Text style={styles.myClubName}>Riverside Pickleball</Text>
-              <Text style={styles.myClubRole}>Member • 6 months</Text>
-              <Text style={styles.myClubActivity}>Last activity: 1 week ago</Text>
-            </View>
-            <View style={styles.myClubBadge}>
-              <Text style={styles.myClubBadgeText}>Active</Text>
-            </View>
-          </TouchableOpacity>
+        
+        <View style={styles.clubCard}>
+          <Text style={styles.clubIcon}>🏆</Text>
+          <Text style={styles.clubName}>Riverside Pickleball</Text>
+          <Text style={styles.clubLocation}>Riverside • 32 members</Text>
+          <Text style={styles.clubStatus}>🟡 2 events today</Text>
         </View>
-      </View>
-
-      {/* Upcoming Events */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Upcoming Events</Text>
-        <View style={styles.eventsList}>
-          <TouchableOpacity style={styles.eventCard}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>15</Text>
-              <Text style={styles.eventMonth}>MAR</Text>
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventTitle}>Spring Championship</Text>
-              <Text style={styles.eventLocation}>PicklePro Elite • Downtown</Text>
-              <Text style={styles.eventTime}>9:00 AM - 5:00 PM</Text>
-            </View>
-            <View style={styles.eventStatus}>
-              <Text style={styles.eventStatusText}>Registered</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.eventCard}>
-            <View style={styles.eventDate}>
-              <Text style={styles.eventDay}>22</Text>
-              <Text style={styles.eventMonth}>MAR</Text>
-            </View>
-            <View style={styles.eventInfo}>
-              <Text style={styles.eventTitle}>Beginner Workshop</Text>
-              <Text style={styles.eventLocation}>Riverside Pickleball</Text>
-              <Text style={styles.eventTime}>2:00 PM - 4:00 PM</Text>
-            </View>
-            <View style={styles.eventStatus}>
-              <Text style={styles.eventStatusText}>Open</Text>
-            </View>
-          </TouchableOpacity>
+        
+        <View style={styles.clubCard}>
+          <Text style={styles.clubIcon}>🏆</Text>
+          <Text style={styles.clubName}>Community Champions</Text>
+          <Text style={styles.clubLocation}>Westside • 28 members</Text>
+          <Text style={styles.clubStatus}>🟢 Active now</Text>
         </View>
       </View>
     </ScrollView>
@@ -145,189 +49,55 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F9FA',
   },
-  headerSection: {
+  content: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10,
   },
-  headerTitle: {
-    fontSize: 24,
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#008080',
     marginBottom: 8,
   },
-  headerSubtitle: {
+  subtitle: {
     fontSize: 16,
-    color: '#6C757D',
-  },
-  section: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 15,
-  },
-  clubsList: {
-    gap: 15,
+    color: '#666',
+    marginBottom: 30,
   },
   clubCard: {
-    flexDirection: 'row',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 15,
+    padding: 20,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
-  clubImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#E9ECEF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  clubImageText: {
-    fontSize: 24,
-  },
-  clubInfo: {
-    flex: 1,
+  clubIcon: {
+    fontSize: 40,
+    marginBottom: 10,
   },
   clubName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#FF8C42',
     marginBottom: 4,
   },
   clubLocation: {
     fontSize: 14,
-    color: '#6C757D',
-    marginBottom: 4,
-  },
-  clubDescription: {
-    fontSize: 14,
-    color: '#6C757D',
+    color: '#666',
     marginBottom: 8,
   },
-  clubStats: {
-    flexDirection: 'row',
-    gap: 15,
-  },
-  clubStat: {
+  clubStatus: {
     fontSize: 12,
-    color: '#6C757D',
     fontWeight: '500',
-  },
-  myClubsList: {
-    gap: 12,
-  },
-  myClubCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 15,
-  },
-  myClubIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#E9ECEF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  myClubIconText: {
-    fontSize: 20,
-  },
-  myClubInfo: {
-    flex: 1,
-  },
-  myClubName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 2,
-  },
-  myClubRole: {
-    fontSize: 14,
-    color: '#6C757D',
-    marginBottom: 2,
-  },
-  myClubActivity: {
-    fontSize: 12,
-    color: '#ADB5BD',
-  },
-  myClubBadge: {
-    backgroundColor: '#28A745',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  myClubBadgeText: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  eventsList: {
-    gap: 12,
-  },
-  eventCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 15,
-  },
-  eventDate: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#6F42C1',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  eventDay: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  eventMonth: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
-  eventInfo: {
-    flex: 1,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 2,
-  },
-  eventLocation: {
-    fontSize: 14,
-    color: '#6C757D',
-    marginBottom: 2,
-  },
-  eventTime: {
-    fontSize: 12,
-    color: '#ADB5BD',
-  },
-  eventStatus: {
-    backgroundColor: '#28A745',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  eventStatusText: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: '#008080',
   },
 });
 

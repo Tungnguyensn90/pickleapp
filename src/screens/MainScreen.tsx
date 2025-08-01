@@ -1,54 +1,27 @@
- import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import TabNavigator from '../navigation';
 
-// Tab components
-import HomeTab from './tabs/HomeTab';
-import ClubsTab from './tabs/ClubsTab';
-import SearchTab from './tabs/SearchTab';
-import ShopTab from './tabs/ShopTab';
-import ChatTab from './tabs/ChatTab';
-
-type TabType = 'home' | 'clubs' | 'search' | 'shop' | 'chat';
+// Define the stack param list
+export type RootStackParamList = {
+  MainTabs: undefined;
+  Profile: undefined;
+};
 
 const MainScreen: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return <HomeTab />;
-      case 'clubs':
-        return <ClubsTab />;
-      case 'search':
-        return <SearchTab />;
-      case 'shop':
-        return <ShopTab />;
-      case 'chat':
-        return <ChatTab />;
-      default:
-        return <HomeTab />;
-    }
-  };
-
-  const tabs = [
-    { id: 'home', label: 'Trang chủ', icon: '🏠' },
-    { id: 'clubs', label: 'Clubs', icon: '🏆' },
-    { id: 'search', label: 'Tìm kiếm', icon: '🔍' },
-    { id: 'shop', label: 'Shop', icon: '🛍️' },
-    { id: 'chat', label: 'Chat', icon: '💬' },
-  ];
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="light-content" backgroundColor="#FF8C42" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -63,7 +36,7 @@ const MainScreen: React.FC = () => {
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.greeting}>Hi Eva!</Text>
-            <TouchableOpacity style={styles.profileButton}>
+            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
               <Text style={styles.profileButtonText}>View Profile</Text>
             </TouchableOpacity>
           </View>
@@ -82,36 +55,9 @@ const MainScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* Tab Content */}
+      {/* Tab Navigator */}
       <View style={styles.content}>
-        {renderTabContent()}
-      </View>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.id}
-            style={[
-              styles.tabButton,
-              activeTab === tab.id && styles.activeTabButton,
-            ]}
-            onPress={() => setActiveTab(tab.id as TabType)}
-          >
-            <Text style={[
-              styles.tabIcon,
-              activeTab === tab.id && styles.activeTabIcon,
-            ]}>
-              {tab.icon}
-            </Text>
-            <Text style={[
-              styles.tabLabel,
-              activeTab === tab.id && styles.activeTabLabel,
-            ]}>
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <TabNavigator />
       </View>
     </SafeAreaView>
   );
@@ -128,13 +74,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
+    paddingTop: 50, // Add extra padding for StatusBar
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E9ECEF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    maxWidth: '60%', // Limit left side width
   },
   avatarContainer: {
     position: 'relative',
@@ -144,9 +101,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E9ECEF',
+    backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FF8C42',
   },
   avatarText: {
     fontSize: 24,
@@ -158,7 +117,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#6F42C1',
+    backgroundColor: '#FF6B6B',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -175,25 +134,28 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#333',
     marginBottom: 4,
   },
   profileButton: {
     borderWidth: 1,
-    borderColor: '#6F42C1',
+    borderColor: '#008080',
     borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 4,
     alignSelf: 'flex-start',
   },
   profileButtonText: {
-    color: '#495057',
+    color: '#008080',
     fontSize: 12,
     fontWeight: '500',
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
+    flex: 1,
+    maxWidth: '40%', // Limit right side width
   },
   headerIcon: {
     width: 40,
@@ -203,45 +165,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   iconText: {
     fontSize: 18,
+    color: '#333',
   },
   content: {
     flex: 1,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E9ECEF',
-    paddingBottom: 20,
-    paddingTop: 10,
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  activeTabButton: {
-    // Active state styling
-  },
-  tabIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-    opacity: 0.6,
-  },
-  activeTabIcon: {
-    opacity: 1,
-  },
-  tabLabel: {
-    fontSize: 12,
-    color: '#6C757D',
-    fontWeight: '500',
-  },
-  activeTabLabel: {
-    color: '#6F42C1',
-    fontWeight: '600',
   },
 });
 
