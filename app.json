@@ -1,4 +1,10 @@
 {
   "name": "SportApp",
-  "displayName": "SportApp"
+  "displayName": "SportApp",
+  "icon": "./assets/images/logo.png",
+  "splash": {
+    "image": "./assets/images/logo.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#4A90E2"
+  }
 }

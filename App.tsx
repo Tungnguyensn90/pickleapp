@@ -9,13 +9,17 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import SplashScreen from './src/screens/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
-import LoginScreen from './src/screens/auth/SignInScreen';
+import SignInScreen from './src/screens/auth/SignInScreen';
+import SignUpScreen from './src/screens/auth/SignUpScreen';
+import MainScreen from './src/screens/MainScreen';
 
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoading, setIsLoading] = useState(true);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<'signin' | 'signup' | 'main'>('signin');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // Simulate splash screen delay - increased to match longer animations
@@ -28,6 +32,19 @@ function App() {
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
+  };
+
+  const handleNavigateToSignUp = () => {
+    setCurrentScreen('signup');
+  };
+
+  const handleNavigateToSignIn = () => {
+    setCurrentScreen('signin');
+  };
+
+  const handleAuthentication = () => {
+    setIsAuthenticated(true);
+    setCurrentScreen('main');
   };
 
   if (isLoading) {
@@ -45,8 +62,13 @@ function App() {
         backgroundColor="#4A90E2"
       />
 
-      <LoginScreen />
-      {/* Main app content will go here */}
+      {isAuthenticated ? (
+        <MainScreen />
+      ) : currentScreen === 'signin' ? (
+        <SignInScreen onNavigateToSignUp={handleNavigateToSignUp} onAuthenticate={handleAuthentication} />
+      ) : (
+        <SignUpScreen onNavigateToSignIn={handleNavigateToSignIn} onAuthenticate={handleAuthentication} />
+      )}
     </>
   );
 }

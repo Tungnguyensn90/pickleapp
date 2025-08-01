@@ -10,12 +10,17 @@ import {
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 
+interface SignInScreenProps {
+    onNavigateToSignUp: () => void;
+    onAuthenticate: () => void;
+}
+
 type FormData = {
     email: string;
     password: string;
 };
 
-const LoginScreen: React.FC = () => {
+const LoginScreen: React.FC<SignInScreenProps> = ({ onNavigateToSignUp, onAuthenticate }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [agreed, setAgreed] = useState(false);
 
@@ -36,6 +41,7 @@ const LoginScreen: React.FC = () => {
             return;
         }
         console.log(data);
+        onAuthenticate();
     };
 
     return (
@@ -118,7 +124,7 @@ const LoginScreen: React.FC = () => {
                     {agreed ? <Text style={styles.checkmark}>✔</Text> : null}
                 </TouchableOpacity>
                 <Text style={styles.checkboxText}>
-                    I’ve read and agreed to <Text style={styles.link}>User Agreement</Text> and{' '}
+                    I've read and agreed to <Text style={styles.link}>User Agreement</Text> and{' '}
                     <Text style={styles.link}>Privacy Policy</Text>
                 </Text>
             </View>
@@ -143,13 +149,11 @@ const LoginScreen: React.FC = () => {
 
             {/* Create Account */}
             <Text style={styles.createAccountText}>
-                Don’t have an account? <Text style={styles.link}>Create Account</Text>
+                Don't have an account? <Text style={styles.link} onPress={onNavigateToSignUp}>Create Account</Text>
             </Text>
         </View>
     );
 };
-
-
 
 const styles = StyleSheet.create({
     container: {
@@ -170,7 +174,6 @@ const styles = StyleSheet.create({
       fontWeight: '600',
       color: '#004D40',
       marginBottom: 30,
-      fontFamily: 'Arvo-Bold',
     },
     inputGroup: {
       width: '100%',
@@ -181,7 +184,6 @@ const styles = StyleSheet.create({
       marginBottom: 4,
       color: '#333',
       fontWeight: '600',
-      fontFamily: 'Arvo-Italic',
     },
     input: {
       backgroundColor: '#fff',
@@ -291,8 +293,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 4,
       },
-      
-  });
-  
+});
 
 export default LoginScreen;
