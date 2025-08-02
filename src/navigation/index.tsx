@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Import screens
 import HomeTab from '../screens/tabs/HomeTab';
@@ -16,7 +17,11 @@ import ProfileScreen from '../screens/ProfileScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator: React.FC = () => (
+interface TabNavigatorProps {
+  onLogout?: () => void;
+}
+
+const TabNavigator: React.FC<TabNavigatorProps> = ({ onLogout }) => (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
@@ -53,7 +58,7 @@ const TabNavigator: React.FC = () => (
       component={HomeTab}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ fontSize: 24, color }}>🏠</Text>
+          <Icon name="home" size={24} color={color} />
         ),
       }}
     />
@@ -62,7 +67,7 @@ const TabNavigator: React.FC = () => (
       component={ClubsTab}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ fontSize: 24, color }}>🏆</Text>
+          <Icon name="emoji-events" size={24} color={color} />
         ),
       }}
     />
@@ -71,7 +76,7 @@ const TabNavigator: React.FC = () => (
       component={SearchTab}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ fontSize: 24, color }}>🔍</Text>
+          <Icon name="search" size={24} color={color} />
         ),
       }}
     />
@@ -80,7 +85,7 @@ const TabNavigator: React.FC = () => (
       component={ShopTab}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ fontSize: 24, color }}>🛍️</Text>
+          <Icon name="shopping-cart" size={24} color={color} />
         ),
       }}
     />
@@ -89,17 +94,21 @@ const TabNavigator: React.FC = () => (
       component={ChatTab}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ fontSize: 24, color }}>💬</Text>
+          <Icon name="chat" size={24} color={color} />
         ),
       }}
     />
   </Tab.Navigator>
 );
 
-const RootNavigator: React.FC = () => (
+interface RootNavigatorProps {
+  onLogout?: () => void;
+}
+
+const RootNavigator: React.FC<RootNavigatorProps> = ({ onLogout }) => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="MainTabs" component={TabNavigator} />
-    <Stack.Screen name="Profile" component={ProfileScreen} />
+    <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ onLogout }} />
   </Stack.Navigator>
 );
 

@@ -1,455 +1,563 @@
 import React, { useState } from 'react';
 import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    Image,
-    Alert,
-    ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  ActivityIndicator,
+  ScrollView,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { useForm, Controller } from 'react-hook-form';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import apiService from '../../services/api';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
-interface SignUpScreenProps {
-    onNavigateToSignIn: () => void;
-    onAuthenticate: () => void;
+interface FormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  first_name: string;
+  last_name: string;
+  agreeToTerms: boolean;
 }
 
-type FormData = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-};
+interface SignUpScreenProps {
+  onNavigateToSignIn: () => void;
+  onAuthenticate: (user: any) => void;
+}
 
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToSignIn, onAuthenticate }) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  
+  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+  const password = watch('password');
 
-    const {
-        control,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm<FormData>({
-        defaultValues: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-        },
-    });
+  const onSubmit = async (data: FormData) => {
+    if (!data.agreeToTerms) {
+      setErrorMessage('Vui lòng đồng ý với điều khoản và điều kiện');
+      setIsErrorModalVisible(true);
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const response = await apiService.signUp({
+        email: data.email,
+        password: data.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+      });
+      console.log('Registration successful:', response);
+      onAuthenticate(response.user);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      setErrorMessage(error.message || 'Không thể tạo tài khoản. Vui lòng thử lại.');
+      setIsErrorModalVisible(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const password = watch('password');
+  return (
+    <View style={styles.container}>
+      {/* Gradient Background */}
+      <LinearGradient
+        colors={['#FF8C42', '#FFD700']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+      
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Logo Section */}
+        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
 
-    const onSubmit = (data: FormData) => {
-        if (data.password !== data.confirmPassword) {
-            Alert.alert('Passwords do not match.');
-            return;
-        }
-        console.log(data);
-        onAuthenticate();
-    };
+        <Text style={styles.title}>Tạo tài khoản mới</Text>
 
-    return (
-        <View style={styles.container}>
-            {/* Gradient Background */}
-            <LinearGradient
-                colors={['#FF8C42', '#FFD700']}
-                style={styles.gradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-            />
-            
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {/* Logo Section */}
-                <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
-
-                <Text style={styles.title}>Create your account</Text>
-
-                {/* First Name Field */}
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>First Name</Text>
-                    <Controller
-                        control={control}
-                        name="firstName"
-                        rules={{ required: 'First name is required' }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your first name"
-                                placeholderTextColor="#FF8C42"
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                autoCapitalize="words"
-                            />
-                        )}
-                    />
-                    {errors.firstName && <Text style={styles.errorText}>{errors.firstName.message}</Text>}
-                </View>
-
-                {/* Last Name Field */}
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Last Name</Text>
-                    <Controller
-                        control={control}
-                        name="lastName"
-                        rules={{ required: 'Last name is required' }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your last name"
-                                placeholderTextColor="#FF8C42"
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                autoCapitalize="words"
-                            />
-                        )}
-                    />
-                    {errors.lastName && <Text style={styles.errorText}>{errors.lastName.message}</Text>}
-                </View>
-
-                {/* Email Field */}
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Email Address</Text>
-                    <Controller
-                        control={control}
-                        name="email"
-                        rules={{
-                            required: 'Email is required',
-                            pattern: {
-                                value: /^\S+@\S+$/i,
-                                message: 'Invalid email format',
-                            },
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your email address"
-                                placeholderTextColor="#FF8C42"
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                        )}
-                    />
-                    {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
-                </View>
-
-                {/* Password Field */}
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Password</Text>
-                    <View style={styles.passwordContainer}>
-                        <Controller
-                            control={control}
-                            name="password"
-                            rules={{ 
-                                required: 'Password is required',
-                                minLength: {
-                                    value: 8,
-                                    message: 'Password must be at least 8 characters'
-                                }
-                            }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <TextInput
-                                    style={styles.passwordInput}
-                                    placeholder="Enter your password"
-                                    placeholderTextColor="#FF8C42"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    secureTextEntry={!showPassword}
-                                />
-                            )}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setShowPassword(!showPassword)}
-                            style={styles.eyeIcon}
-                        >
-                            <Text style={styles.eyeIconText}>👁️</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {errors.password && (
-                        <Text style={styles.errorText}>{errors.password.message}</Text>
-                    )}
-                </View>
-
-                {/* Confirm Password Field */}
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Confirm Password</Text>
-                    <View style={styles.passwordContainer}>
-                        <Controller
-                            control={control}
-                            name="confirmPassword"
-                            rules={{ 
-                                required: 'Please confirm your password',
-                                validate: (value) => value === password || 'Passwords do not match'
-                            }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <TextInput
-                                    style={styles.passwordInput}
-                                    placeholder="Confirm your password"
-                                    placeholderTextColor="#FF8C42"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    secureTextEntry={!showConfirmPassword}
-                                />
-                            )}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                            style={styles.eyeIcon}
-                        >
-                            <Text style={styles.eyeIconText}>👁️</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {errors.confirmPassword && (
-                        <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
-                    )}
-                </View>
-
-                {/* Sign Up Button */}
-                <TouchableOpacity style={styles.signUpButton} onPress={handleSubmit(onSubmit)}>
-                    <Text style={styles.signUpText}>Create Account</Text>
-                </TouchableOpacity>
-
-                {/* Divider */}
-                <Text style={styles.dividerText}>OR SIGN UP WITH</Text>
-
-                {/* Social */}
-                <View style={styles.socialContainer}>
-                    <TouchableOpacity style={styles.socialButton}>
-                        <Image source={require('../../../assets/images/google.png')} style={styles.socialIcon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.socialButton}>
-                        <Image source={require('../../../assets/images/facebook.png')} style={styles.socialIcon} />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Sign In Link */}
-                <Text style={styles.signInText}>
-                    Already have an account? <Text style={styles.link} onPress={onNavigateToSignIn}>Sign In</Text>
-                </Text>
-            </ScrollView>
+        {/* First Name Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Tên</Text>
+          <Controller
+            control={control}
+            name="first_name"
+            rules={{
+              required: 'Tên là bắt buộc',
+              minLength: {
+                value: 2,
+                message: 'Tên phải có ít nhất 2 ký tự',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={styles.input}
+                placeholder="Nhập tên của bạn"
+                placeholderTextColor="#FF8C42"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                editable={!isLoading}
+              />
+            )}
+          />
+          {errors.first_name && <Text style={styles.errorText}>{errors.first_name.message}</Text>}
         </View>
-    );
+
+        {/* Last Name Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Họ</Text>
+          <Controller
+            control={control}
+            name="last_name"
+            rules={{
+              required: 'Họ là bắt buộc',
+              minLength: {
+                value: 2,
+                message: 'Họ phải có ít nhất 2 ký tự',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={styles.input}
+                placeholder="Nhập họ của bạn"
+                placeholderTextColor="#FF8C42"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                editable={!isLoading}
+              />
+            )}
+          />
+          {errors.last_name && <Text style={styles.errorText}>{errors.last_name.message}</Text>}
+        </View>
+
+        {/* Email Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Địa chỉ Email</Text>
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: 'Email là bắt buộc',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Định dạng email không hợp lệ',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={styles.input}
+                placeholder="Nhập địa chỉ email của bạn"
+                placeholderTextColor="#FF8C42"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!isLoading}
+              />
+            )}
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+        </View>
+
+        {/* Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Mật khẩu</Text>
+          <View style={styles.passwordContainer}>
+            <Controller
+              control={control}
+              name="password"
+              rules={{
+                required: 'Mật khẩu là bắt buộc',
+                minLength: {
+                  value: 6,
+                  message: 'Mật khẩu phải có ít nhất 6 ký tự',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Nhập mật khẩu của bạn"
+                  placeholderTextColor="#FF8C42"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry={!showPassword}
+                  editable={!isLoading}
+                />
+              )}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Icon
+                name={showPassword ? 'visibility-off' : 'visibility'}
+                size={24}
+                color="#FF8C42"
+              />
+            </TouchableOpacity>
+          </View>
+          {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+        </View>
+
+        {/* Confirm Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Xác nhận mật khẩu</Text>
+          <View style={styles.passwordContainer}>
+            <Controller
+              control={control}
+              name="confirmPassword"
+              rules={{
+                required: 'Xác nhận mật khẩu là bắt buộc',
+                validate: (value) => value === password || 'Mật khẩu không khớp',
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Nhập lại mật khẩu của bạn"
+                  placeholderTextColor="#FF8C42"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry={!showConfirmPassword}
+                  editable={!isLoading}
+                />
+              )}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              <Icon
+                name={showConfirmPassword ? 'visibility-off' : 'visibility'}
+                size={24}
+                color="#FF8C42"
+              />
+            </TouchableOpacity>
+          </View>
+          {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>}
+        </View>
+
+        {/* Terms and Conditions Checkbox */}
+        <View style={styles.checkboxContainer}>
+          <Controller
+            control={control}
+            name="agreeToTerms"
+            rules={{
+              required: 'Vui lòng đồng ý với điều khoản và điều kiện',
+            }}
+            render={({ field: { onChange, value } }) => (
+              <TouchableOpacity
+                style={styles.checkboxRow}
+                onPress={() => onChange(!value)}
+                disabled={isLoading}
+              >
+                <View style={[styles.checkbox, value && styles.checkboxChecked]}>
+                  {value && <Icon name="check" size={16} color="#FFFFFF" />}
+                </View>
+                <View style={styles.checkboxTextContainer}>
+                  <Text style={styles.checkboxText}>
+                    Tôi đồng ý với{' '}
+                    <Text style={styles.termsLink}>Điều khoản sử dụng</Text>
+                    {' '}và{' '}
+                    <Text style={styles.termsLink}>Chính sách bảo mật</Text>
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+          {errors.agreeToTerms && <Text style={styles.errorText}>{errors.agreeToTerms.message}</Text>}
+        </View>
+
+        {/* Sign Up Button */}
+        <TouchableOpacity
+          style={[styles.signUpButton, isLoading && styles.disabledButton]}
+          onPress={handleSubmit(onSubmit)}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#FFFFFF" size="small" />
+          ) : (
+            <Text style={styles.signUpButtonText}>Đăng ký</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>hoặc</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Social Login Buttons */}
+        <View style={styles.socialButtons}>
+          <TouchableOpacity style={styles.socialButton}>
+            <Image source={require('../../../assets/images/google.png')} style={styles.socialIcon} />
+            <Text style={styles.socialButtonText}>Google</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.socialButton}>
+            <Image source={require('../../../assets/images/facebook.png')} style={styles.socialIcon} />
+            <Text style={styles.socialButtonText}>Facebook</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Sign In Link */}
+        <View style={styles.signInContainer}>
+          <Text style={styles.signInText}>Đã có tài khoản? </Text>
+          <TouchableOpacity onPress={onNavigateToSignIn}>
+            <Text style={styles.signInLink}>Đăng nhập ngay</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Error Modal */}
+      <ConfirmationModal
+        isVisible={isErrorModalVisible}
+        title="Đăng ký thất bại"
+        message={errorMessage}
+        confirmText="OK"
+        cancelText=""
+        onConfirm={() => setIsErrorModalVisible(false)}
+        onCancel={() => setIsErrorModalVisible(false)}
+        type="danger"
+        icon="error"
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    logo: {
-        width: 220,
-        height: 220,
-        resizeMode: 'contain',
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+  },
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40, // Add some padding at the bottom for the last element
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginBottom: 30,
+    resizeMode: 'contain',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  input: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: '#333',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  passwordContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingRight: 50,
+    fontSize: 16,
+    color: '#333',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    padding: 4,
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 14,
+    marginTop: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  signUpButton: {
+    backgroundColor: '#008080',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
     },
-    container: {
-        flex: 1,
-    },
-    gradient: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-    },
-    scrollContainer: {
-        flexGrow: 1,
-        paddingHorizontal: 24,
-        paddingTop: 60,
-        paddingBottom: 40,
-        alignItems: 'center',
-    },
-    logoSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 30,
-        width: '100%',
-        justifyContent: 'space-between',
-    },
-    logoContainer: {
-        alignItems: 'center',
-    },
-    logoText: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#FF8C42',
-        marginBottom: -5,
-    },
-    logoSubText: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#FF8C42',
-    },
-    logoGraphics: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    speedObject: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginRight: 10,
-    },
-    yellowCircle: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        backgroundColor: '#FFD700',
-        borderWidth: 2,
-        borderColor: '#FF8C42',
-    },
-    orangeStreaks: {
-        width: 30,
-        height: 8,
-        backgroundColor: '#FF8C42',
-        borderRadius: 4,
-        marginLeft: -5,
-    },
-    smallYellowCircle: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: '#FFD700',
-        borderWidth: 1,
-        borderColor: '#FF8C42',
-    },
-    avatarContainer: {
-        marginLeft: 20,
-    },
-    avatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: '#FFD700',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#FF8C42',
-    },
-    avatarText: {
-        fontSize: 24,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#008080',
-        marginBottom: 30,
-        textAlign: 'center',
-    },
-    inputGroup: {
-        width: '100%',
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-        color: '#008080',
-        fontWeight: '600',
-    },
-    input: {
-        backgroundColor: '#F5F5DC',
-        padding: 16,
-        borderRadius: 12,
-        borderWidth: 0,
-        fontSize: 16,
-        color: '#333',
-    },
-    passwordContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F5F5DC',
-        borderRadius: 12,
-        borderWidth: 0,
-    },
-    passwordInput: {
-        flex: 1,
-        padding: 16,
-        fontSize: 16,
-        color: '#333',
-    },
-    eyeIcon: {
-        paddingHorizontal: 16,
-    },
-    eyeIconText: {
-        fontSize: 20,
-    },
-    signUpButton: {
-        backgroundColor: '#008080',
-        width: '100%',
-        paddingVertical: 16,
-        borderRadius: 30,
-        alignItems: 'center',
-        marginBottom: 30,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    signUpText: {
-        color: '#FFFFFF',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    dividerText: {
-        color: '#999',
-        marginBottom: 20,
-        fontSize: 14,
-        textAlign: 'center',
-        fontWeight: '500',
-    },
-    socialContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 20,
-        marginBottom: 30,
-    },
-    socialButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    socialIcon: {
-        width: 30,
-        height: 30,
-        resizeMode: 'contain',
-    },
-    signInText: {
-        fontSize: 14,
-        color: '#999',
-        textAlign: 'center',
-    },
-    link: {
-        color: '#008080',
-        fontWeight: '600',
-        textDecorationLine: 'underline',
-    },
-    errorText: {
-        color: '#FF6B6B',
-        fontSize: 12,
-        marginTop: 4,
-    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  disabledButton: {
+    opacity: 0.6,
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  dividerText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginHorizontal: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 40,
+  },
+  socialButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    paddingVertical: 14,
+    marginHorizontal: 5,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  socialIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+  },
+  socialButtonText: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  signInContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signInText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  signInLink: {
+    color: '#008080',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  checkboxContainer: {
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#FF8C42',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: 'transparent',
+  },
+  checkboxChecked: {
+    backgroundColor: '#FF8C42',
+    borderColor: '#FF8C42',
+  },
+  checkboxTextContainer: {
+    flex: 1,
+  },
+  checkboxText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  termsLink: {
+    color: '#008080',
+    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
 });
 
 export default SignUpScreen; 

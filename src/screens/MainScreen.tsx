@@ -6,60 +6,85 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import TabNavigator from '../navigation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import RootNavigator from '../navigation';
 
 // Define the stack param list
 export type RootStackParamList = {
   MainTabs: undefined;
-  Profile: undefined;
+  Profile: { onLogout?: () => void };
 };
 
-const MainScreen: React.FC = () => {
+interface MainScreenProps {
+  user?: any;
+  onLogout?: () => void;
+}
+
+const MainScreen: React.FC<MainScreenProps> = ({ user, onLogout }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const insets = useSafeAreaInsets();
+
+  const getUserDisplayName = () => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    } else if (user?.first_name) {
+      return user.first_name;
+    } else if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'Người dùng';
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#FF8C42" />
       
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <View style={styles.headerLeft}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>👤</Text>
-            </View>
+            {user?.avatar ? (
+              <Image source={{ uri: `http://10.0.2.2:3000${user.avatar}` }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatar}>
+                <Icon name="person" size={24} color="#FF8C42" />
+              </View>
+            )}
             <View style={styles.notificationBadge}>
               <Text style={styles.badgeText}>3</Text>
             </View>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.greeting}>Hi Eva!</Text>
-            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
-              <Text style={styles.profileButtonText}>View Profile</Text>
+            <Text style={styles.greeting}>Xin chào {getUserDisplayName()}!</Text>
+            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile', { onLogout })}>
+              <Text style={styles.profileButtonText}>Xem hồ sơ</Text>
             </TouchableOpacity>
           </View>
         </View>
         
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.iconText}>💬</Text>
+            <Icon name="chat" size={24} color="#333" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.iconText}>🔔</Text>
+            <Icon name="notifications" size={24} color="#333" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.iconText}>🛒</Text>
+            <Icon name="shopping-cart" size={24} color="#333" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Tab Navigator */}
+      {/* Navigation */}
       <View style={styles.content}>
-        <TabNavigator />
+        <RootNavigator onLogout={onLogout} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -74,7 +99,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    paddingTop: 50, // Add extra padding for StatusBar
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E9ECEF',
@@ -85,39 +109,35 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 3,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    maxWidth: '60%', // Limit left side width
   },
   avatarContainer: {
     position: 'relative',
     marginRight: 12,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#FFD700',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#FF8C42',
   },
-  avatarText: {
-    fontSize: 24,
-  },
   notificationBadge: {
     position: 'absolute',
-    top: -2,
-    right: -2,
+    top: -5,
+    right: -5,
+    backgroundColor: '#FF6B6B',
+    borderRadius: 10,
     width: 20,
     height: 20,
-    borderRadius: 10,
-    backgroundColor: '#FF6B6B',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -132,30 +152,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#333',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   profileButton: {
-    borderWidth: 1,
-    borderColor: '#008080',
-    borderRadius: 15,
+    backgroundColor: '#FF8C42',
     paddingHorizontal: 12,
     paddingVertical: 4,
+    borderRadius: 12,
     alignSelf: 'flex-start',
   },
   profileButtonText: {
-    color: '#008080',
+    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '500',
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    flex: 1,
-    maxWidth: '40%', // Limit right side width
   },
   headerIcon: {
     width: 40,
@@ -165,20 +181,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  iconText: {
-    fontSize: 18,
-    color: '#333',
   },
   content: {
     flex: 1,

@@ -5,8 +5,9 @@
  * @format
  */
 
+import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { StatusBar, StyleSheet, useColorScheme, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from './src/screens/SplashScreen';
@@ -14,6 +15,7 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import SignInScreen from './src/screens/auth/SignInScreen';
 import SignUpScreen from './src/screens/auth/SignUpScreen';
 import MainScreen from './src/screens/MainScreen';
+import apiService from './src/services/api';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -21,15 +23,41 @@ function App() {
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<'signin' | 'signup' | 'main'>('signin');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Simulate splash screen delay - increased to match longer animations
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 7000); // Increased from 3000ms to 7000ms
-
-    return () => clearTimeout(timer);
+    // Check if user is already authenticated
+    checkAuthenticationStatus();
   }, []);
+
+  const checkAuthenticationStatus = async () => {
+    try {
+      const token = apiService.getToken();
+      if (!token) {
+        console.log('No token found');
+        setIsAuthenticated(false);
+        setCurrentScreen('signin');
+        return;
+      }
+
+      // Try to get current user data
+      const response = await apiService.getCurrentUser();
+      setUser(response.user);
+      setIsAuthenticated(true);
+      setCurrentScreen('main');
+    } catch (error: any) {
+      console.log('Authentication check failed:', error.message);
+      // Clear any invalid token
+      apiService.removeToken();
+      setIsAuthenticated(false);
+      setCurrentScreen('signin');
+    } finally {
+      // Simulate splash screen delay
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+    }
+  };
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
@@ -43,9 +71,25 @@ function App() {
     setCurrentScreen('signin');
   };
 
-  const handleAuthentication = () => {
+  const handleAuthentication = (userData: any) => {
+    setUser(userData);
     setIsAuthenticated(true);
     setCurrentScreen('main');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await apiService.logout();
+      setUser(null);
+      setIsAuthenticated(false);
+      setCurrentScreen('signin');
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      // Force logout even if API call fails
+      setUser(null);
+      setIsAuthenticated(false);
+      setCurrentScreen('signin');
+    }
   };
 
   if (isLoading) {
@@ -66,7 +110,7 @@ function App() {
         />
 
         {isAuthenticated ? (
-          <MainScreen />
+          <MainScreen user={user} onLogout={handleLogout} />
         ) : currentScreen === 'signin' ? (
           <SignInScreen onNavigateToSignUp={handleNavigateToSignUp} onAuthenticate={handleAuthentication} />
         ) : (

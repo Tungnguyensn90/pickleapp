@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,9 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
   Animated,
 } from 'react-native';
-import { FONTS, FONT_STYLES } from '../constants/fonts';
+import LinearGradient from 'react-native-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,27 +29,27 @@ interface OnboardingScreenProps {
 const onboardingPages: OnboardingPage[] = [
   {
     id: 1,
-    title: 'Find Courts',
-    subtitle: 'Discover nearby pickleball courts',
-    description: 'Locate courts in your area, check availability, and get directions to your next game. Find both indoor and outdoor courts.',
+    title: 'Tìm Sân Chơi',
+    subtitle: 'Khám phá các sân pickleball gần bạn',
+    description: 'Tìm kiếm sân chơi trong khu vực, kiểm tra tình trạng và nhận chỉ đường đến trận đấu tiếp theo. Tìm cả sân trong nhà và ngoài trời.',
     icon: '🏟️',
     color: '#4A90E2',
     chibi: '🏃‍♂️',
   },
   {
     id: 2,
-    title: 'Match Players',
-    subtitle: 'Connect with fellow players',
-    description: 'Find players of your skill level, schedule games, and build your pickleball community. Join games or create your own.',
+    title: 'Ghép Đấu',
+    subtitle: 'Kết nối với các người chơi khác',
+    description: 'Tìm người chơi cùng trình độ, lên lịch trận đấu và xây dựng cộng đồng pickleball của bạn. Tham gia trận đấu hoặc tạo trận đấu riêng.',
     icon: '🤝',
     color: '#F5A623',
     chibi: '👥',
   },
   {
     id: 3,
-    title: 'Join Clubs',
-    subtitle: 'Be part of the community',
-    description: 'Discover local pickleball clubs, join tournaments, and participate in organized events. Stay active and competitive.',
+    title: 'Tham Gia Câu Lạc Bộ',
+    subtitle: 'Trở thành một phần của cộng đồng',
+    description: 'Khám phá các câu lạc bộ pickleball địa phương, tham gia giải đấu và tham dự các sự kiện có tổ chức. Giữ hoạt động và cạnh tranh.',
     icon: '🏆',
     color: '#4CAF50',
     chibi: '🎉',
@@ -60,126 +59,97 @@ const onboardingPages: OnboardingPage[] = [
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const chibiBounce = useRef(new Animated.Value(0)).current;
-  const iconPulse = useRef(new Animated.Value(1)).current;
-  const floatingElements = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
-  const dotAnimations = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
+  const animatedValues = useRef({
+    iconPulse: new Animated.Value(1),
+    chibiTranslateY: new Animated.Value(0),
+    floatingElements: [
+      new Animated.Value(0),
+      new Animated.Value(0),
+      new Animated.Value(0),
+    ],
+  }).current;
 
-  useEffect(() => {
-    // Chibi bounce animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(chibiBounce, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(chibiBounce, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+  const { iconPulse, chibiTranslateY, floatingElements } = animatedValues;
 
+  React.useEffect(() => {
     // Icon pulse animation
-    Animated.loop(
+    const pulseAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(iconPulse, {
-          toValue: 1.2,
-          duration: 800,
+          toValue: 1.1,
+          duration: 1000,
           useNativeDriver: true,
         }),
         Animated.timing(iconPulse, {
           toValue: 1,
-          duration: 800,
+          duration: 1000,
           useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+    pulseAnimation.start();
+
+    // Chibi floating animation
+    const chibiAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(chibiTranslateY, {
+          toValue: -15,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(chibiTranslateY, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    chibiAnimation.start();
 
     // Floating elements animation
     floatingElements.forEach((element, index) => {
-      Animated.loop(
+      const delay = index * 500;
+      const floatAnimation = Animated.loop(
         Animated.sequence([
+          Animated.delay(delay),
           Animated.timing(element, {
             toValue: 1,
-            duration: 1500 + index * 200,
+            duration: 2000,
             useNativeDriver: true,
           }),
           Animated.timing(element, {
             toValue: 0,
-            duration: 1500 + index * 200,
+            duration: 2000,
             useNativeDriver: true,
           }),
         ])
-      ).start();
+      );
+      floatAnimation.start();
     });
 
-    // Dot animations
-    dotAnimations.forEach((dot, index) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(dot, {
-            toValue: 1,
-            duration: 1200 + index * 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(dot, {
-            toValue: 0,
-            duration: 1200 + index * 300,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    });
+    return () => {
+      pulseAnimation.stop();
+      chibiAnimation.stop();
+      floatingElements.forEach(element => element.stopAnimation());
+    };
   }, []);
 
   const handleNext = () => {
     if (currentPage < onboardingPages.length - 1) {
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
       scrollViewRef.current?.scrollTo({
         x: nextPage * width,
         animated: true,
       });
+    } else {
+      onComplete();
     }
   };
 
   const handleSkip = () => {
     onComplete();
   };
-
-  const handleGetStarted = () => {
-    onComplete();
-  };
-
-  const chibiTranslateY = chibiBounce.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -15],
-  });
 
   const renderPage = (page: OnboardingPage, index: number) => (
     <View key={page.id} style={styles.page}>
@@ -260,7 +230,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               },
             ]}
           >
-            <Text style={styles.floatingText}>⭐</Text>
+            <Text style={styles.floatingText}>🎯</Text>
           </Animated.View>
         </View>
       </View>
@@ -269,11 +239,16 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#4A90E2" />
+      <LinearGradient
+        colors={['#FF8C42', '#FFD700']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
       
       {/* Skip Button */}
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-        <Text style={styles.skipText}>Skip</Text>
+        <Text style={styles.skipText}>Bỏ qua</Text>
       </TouchableOpacity>
 
       {/* Pages */}
@@ -286,74 +261,31 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
           setCurrentPage(pageIndex);
         }}
+        style={styles.scrollView}
       >
         {onboardingPages.map((page, index) => renderPage(page, index))}
       </ScrollView>
 
-      {/* Enhanced Pagination Dots */}
+      {/* Pagination Dots */}
       <View style={styles.paginationContainer}>
-        {onboardingPages.map((_, index) => {
-          const isActive = index === currentPage;
-          const dotScale = dotAnimations[index].interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 1.3],
-          });
-          
-          return (
-            <Animated.View
-              key={index}
-              style={[
-                styles.paginationDotContainer,
-                {
-                  transform: [{ scale: isActive ? dotScale : 1 }],
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.paginationDot,
-                  isActive && styles.paginationDotActive,
-                ]}
-              >
-                {isActive && (
-                  <Animated.View
-                    style={[
-                      styles.paginationDotInner,
-                      {
-                        opacity: dotAnimations[index],
-                      },
-                    ]}
-                  />
-                )}
-              </View>
-              {isActive && (
-                <Animated.View
-                  style={[
-                    styles.paginationDotGlow,
-                    {
-                      opacity: dotAnimations[index],
-                    },
-                  ]}
-                />
-              )}
-            </Animated.View>
-          );
-        })}
+        {onboardingPages.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.paginationDot,
+              index === currentPage && styles.paginationDotActive,
+            ]}
+          />
+        ))}
       </View>
 
-      {/* Action Buttons */}
-      <View style={styles.actionContainer}>
-        {currentPage === onboardingPages.length - 1 ? (
-          <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
-            <View style={styles.getStartedGradient}>
-              <Text style={styles.getStartedText}>Start Playing</Text>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-            <Text style={styles.nextText}>Next</Text>
-          </TouchableOpacity>
-        )}
+      {/* Next/Get Started Button */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+          <Text style={styles.nextButtonText}>
+            {currentPage === onboardingPages.length - 1 ? 'Bắt đầu' : 'Tiếp theo'}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -362,23 +294,31 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+  },
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   skipButton: {
     position: 'absolute',
-    top: 40,
+    top: 60,
     right: 20,
-    zIndex: 1,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    zIndex: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
   },
   skipText: {
-    ...FONT_STYLES.CHIBI_BUTTON,
-    color: '#000000',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  scrollView: {
+    flex: 1,
   },
   page: {
     width,
@@ -388,89 +328,72 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  pageContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 40,
   },
+  pageContent: {
+    alignItems: 'center',
+    position: 'relative',
+  },
   chibiContainer: {
-    position: 'absolute',
-    top: 80,
-    right: 40,
-    zIndex: 3,
+    marginBottom: 30,
   },
   chibiText: {
-    fontSize: 60,
-    fontFamily: FONTS.CHIBI_PRIMARY,
+    fontSize: 80,
   },
   iconContainer: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
   iconText: {
-    fontSize: 80,
-    fontFamily: FONTS.CHIBI_PRIMARY,
+    fontSize: 60,
   },
   textContainer: {
     alignItems: 'center',
     maxWidth: 300,
   },
   title: {
-    ...FONT_STYLES.CHIBI_TITLE,
+    fontSize: 32,
+    fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    marginBottom: 10,
   },
   subtitle: {
-    ...FONT_STYLES.CHIBI_SUBTITLE,
-    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 20,
+    color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
+    opacity: 0.9,
   },
   description: {
-    ...FONT_STYLES.CHIBI_BODY,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 16,
+    color: '#FFFFFF',
     textAlign: 'center',
     lineHeight: 24,
+    opacity: 0.8,
   },
   floatingElement: {
     position: 'absolute',
-    zIndex: 2,
   },
   floating1: {
-    top: 120,
-    left: 30,
+    top: '20%',
+    left: '10%',
   },
   floating2: {
-    top: 180,
-    right: 40,
+    top: '30%',
+    right: '15%',
   },
   floating3: {
-    bottom: 150,
-    left: 50,
+    bottom: '25%',
+    left: '20%',
   },
   floatingText: {
-    fontSize: 28,
-    opacity: 0.8,
-    fontFamily: FONTS.CHIBI_PRIMARY,
+    fontSize: 30,
   },
   paginationContainer: {
     flexDirection: 'row',
@@ -480,123 +403,42 @@ const styles = StyleSheet.create({
     bottom: 120,
     left: 0,
     right: 0,
-    paddingHorizontal: 20,
-  },
-  paginationDotContainer: {
-    marginHorizontal: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   paginationDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    marginHorizontal: 5,
   },
   paginationDotActive: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#FFFFFF',
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 30,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: 20,
+    right: 20,
+  },
+  nextButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 18,
+    borderRadius: 25,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  paginationDotInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#4A90E2',
-  },
-  paginationDotGlow: {
-    position: 'absolute',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#FFFFFF',
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.8,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 8,
   },
-  actionContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 20,
-    right: 20,
-  },
-  nextButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  nextText: {
-    ...FONT_STYLES.CHIBI_BUTTON,
-    color: '#000000',
-  },
-  getStartedButton: {
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  getStartedGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-
-    borderRadius: 16,
-    backgroundColor: '#4A90E2',
-  },
-  getStartedText: {
-    ...FONT_STYLES.CHIBI_BUTTON,
-    color: '#FFFFFF',
-  },
-  arrowText: {
-    fontSize: 20,
-    color: '#4A90E2',
+  nextButtonText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: FONTS.CHIBI_PRIMARY,
+    color: '#FF8C42',
   },
 });
 

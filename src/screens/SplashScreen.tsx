@@ -7,6 +7,8 @@ import {
   Dimensions,
   StatusBar,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { FONTS, FONT_STYLES } from '../constants/fonts';
 
 const { width, height } = Dimensions.get('window');
@@ -187,7 +189,7 @@ const SplashScreen: React.FC = () => {
           <Text style={styles.floatingText}>🎾</Text>
         </Animated.View>
         <Animated.View style={[styles.floatingElement, styles.floating2, { opacity: logoOpacity }]}>
-          <Text style={styles.floatingText}>🏆</Text>
+          <Icon name="emoji-events" size={60} color="#FFD700" style={styles.floatingText} />
         </Animated.View>
         <Animated.View style={[styles.floatingElement, styles.floating3, { opacity: logoOpacity }]}>
           <Text style={styles.floatingText}>🤝</Text>
