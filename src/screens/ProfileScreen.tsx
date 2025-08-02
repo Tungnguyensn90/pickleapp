@@ -6,26 +6,28 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Modal,
+  Alert,
   TextInput,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
+// import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import apiService from '../services/api';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 type ProfileScreenRouteProp = RouteProp<{
-  Profile: { onLogout?: () => void };
+  Profile: { onLogout?: () => void; onProfileUpdate?: (updatedUser: any) => void };
 }, 'Profile'>;
 
 const ProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const route = useRoute<ProfileScreenRouteProp>();
-  const { onLogout } = route.params || {};
+  const { onLogout, onProfileUpdate } = route.params || {};
   
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,6 +117,9 @@ const ProfileScreen: React.FC = () => {
       setIsEditModalVisible(false);
       setSuccessMessage('Cập nhật hồ sơ thành công');
       setIsSuccessModalVisible(true);
+      if (onProfileUpdate) {
+        onProfileUpdate(response.user);
+      }
     } catch (error: any) {
       console.error('Profile update error:', error);
       setErrorMessage('Không thể cập nhật hồ sơ');
@@ -177,6 +182,9 @@ const ProfileScreen: React.FC = () => {
         setSuccessMessage('Tạo chibi avatar thành công!');
         
         setIsSuccessModalVisible(true);
+        if (onProfileUpdate) {
+          onProfileUpdate(response.user);
+        }
       }
     } catch (error: any) {
       console.error('Avatar upload error:', error);
@@ -199,6 +207,9 @@ const ProfileScreen: React.FC = () => {
       setUser(response.user);
       setSuccessMessage('Xóa ảnh đại diện thành công');
       setIsSuccessModalVisible(true);
+      if (onProfileUpdate) {
+        onProfileUpdate(response.user);
+      }
     } catch (error: any) {
       console.error('Avatar delete error:', error);
       setErrorMessage('Không thể xóa ảnh đại diện');
@@ -247,7 +258,7 @@ const ProfileScreen: React.FC = () => {
               {isUpdating && (
                 <View style={styles.avatarOverlay}>
                   <ActivityIndicator color="#FFFFFF" size="small" />
-                </View>
+            </View>
               )}
             </TouchableOpacity>
             <View style={styles.userDetails}>
@@ -373,98 +384,107 @@ const ProfileScreen: React.FC = () => {
       <Modal
         visible={isEditModalVisible}
         animationType="slide"
-        presentationStyle="pageSheet"
+        transparent={true}
         onRequestClose={handleCancelEdit}
       >
-        <LinearGradient colors={['#FF8C42', '#FFD700']} style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={handleCancelEdit} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Hủy</Text>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Chỉnh sửa hồ sơ</Text>
-            <TouchableOpacity 
-              onPress={handleSaveProfile} 
-              style={styles.saveButton}
-              disabled={isUpdating}
-            >
-              <Text style={styles.saveButtonText}>
-                {isUpdating ? 'Đang lưu...' : 'Lưu'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Tên</Text>
-              <TextInput
-                style={styles.textInput}
-                value={editForm.first_name}
-                onChangeText={(text) => setEditForm({ ...editForm, first_name: text })}
-                placeholder="Nhập tên"
-                placeholderTextColor="#999"
-              />
+        <View style={styles.modalContainer}>
+          <LinearGradient
+            colors={['#FF8C42', '#FFD700']}
+            style={styles.modalContent}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={handleCancelEdit} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Hủy</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Chỉnh sửa hồ sơ</Text>
+              <TouchableOpacity 
+                onPress={handleSaveProfile} 
+                style={styles.saveButton}
+                disabled={isUpdating}
+              >
+                {isUpdating ? (
+                  <ActivityIndicator color="#FFFFFF" size="small" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Lưu</Text>
+                )}
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Họ</Text>
-              <TextInput
-                style={styles.textInput}
-                value={editForm.last_name}
-                onChangeText={(text) => setEditForm({ ...editForm, last_name: text })}
-                placeholder="Nhập họ"
-                placeholderTextColor="#999"
-              />
-            </View>
+            <ScrollView style={styles.modalScrollContent} showsVerticalScrollIndicator={false}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Tên</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editForm.first_name}
+                  onChangeText={(text) => setEditForm({ ...editForm, first_name: text })}
+                  placeholder="Nhập tên"
+                  placeholderTextColor="#999"
+                />
+              </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Địa điểm</Text>
-              <TextInput
-                style={styles.textInput}
-                value={editForm.location}
-                onChangeText={(text) => setEditForm({ ...editForm, location: text })}
-                placeholder="Nhập địa điểm của bạn"
-                placeholderTextColor="#999"
-              />
-            </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Họ</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editForm.last_name}
+                  onChangeText={(text) => setEditForm({ ...editForm, last_name: text })}
+                  placeholder="Nhập họ"
+                  placeholderTextColor="#999"
+                />
+              </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Cấp độ người chơi</Text>
-              <TextInput
-                style={styles.textInput}
-                value={editForm.player_rank}
-                onChangeText={(text) => setEditForm({ ...editForm, player_rank: text })}
-                placeholder="VD: Người mới, Trung cấp, Nâng cao"
-                placeholderTextColor="#999"
-              />
-            </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Địa điểm</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editForm.location}
+                  onChangeText={(text) => setEditForm({ ...editForm, location: text })}
+                  placeholder="Nhập địa điểm của bạn"
+                  placeholderTextColor="#999"
+                />
+              </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Điểm ELO</Text>
-              <TextInput
-                style={styles.textInput}
-                value={editForm.elo}
-                onChangeText={(text) => setEditForm({ ...editForm, elo: text })}
-                placeholder="Nhập điểm ELO"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-              />
-            </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Cấp độ người chơi</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editForm.player_rank}
+                  onChangeText={(text) => setEditForm({ ...editForm, player_rank: text })}
+                  placeholder="VD: Người mới, Trung cấp, Nâng cao"
+                  placeholderTextColor="#999"
+                />
+              </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Mô tả</Text>
-              <TextInput
-                style={[styles.textInput, styles.textArea]}
-                value={editForm.description}
-                onChangeText={(text) => setEditForm({ ...editForm, description: text })}
-                placeholder="Hãy kể về bản thân"
-                placeholderTextColor="#999"
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </View>
-          </ScrollView>
-        </LinearGradient>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Điểm ELO</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editForm.elo}
+                  onChangeText={(text) => setEditForm({ ...editForm, elo: text })}
+                  placeholder="Nhập điểm ELO"
+                  placeholderTextColor="#999"
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Mô tả</Text>
+                <TextInput
+                  style={[styles.textInput, styles.textArea]}
+                  value={editForm.description}
+                  onChangeText={(text) => setEditForm({ ...editForm, description: text })}
+                  placeholder="Hãy kể về bản thân"
+                  placeholderTextColor="#999"
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </ScrollView>
+          </LinearGradient>
+        </View>
       </Modal>
 
       {/* Logout Confirmation Modal */}
@@ -787,6 +807,14 @@ const styles = StyleSheet.create({
   // Modal Styles
   modalContainer: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    flex: 1,
+    maxHeight: '90%',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -827,13 +855,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  modalContent: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
   inputGroup: {
-    marginBottom: 20,
+    // marginBottom: 5,
   },
   inputLabel: {
     fontSize: 16,
@@ -853,11 +876,17 @@ const styles = StyleSheet.create({
     color: '#333',
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    marginBottom: 20,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
     paddingTop: 14,
+  },
+  modalScrollContent: {
+    // flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
 });
 

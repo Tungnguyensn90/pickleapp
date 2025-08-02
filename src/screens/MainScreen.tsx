@@ -17,15 +17,16 @@ import RootNavigator from '../navigation';
 // Define the stack param list
 export type RootStackParamList = {
   MainTabs: undefined;
-  Profile: { onLogout?: () => void };
+  Profile: { onLogout?: () => void; onProfileUpdate?: (updatedUser: any) => void };
 };
 
 interface MainScreenProps {
   user?: any;
   onLogout?: () => void;
+  onProfileUpdate?: (updatedUser: any) => void;
 }
 
-const MainScreen: React.FC<MainScreenProps> = ({ user, onLogout }) => {
+const MainScreen: React.FC<MainScreenProps> = ({ user, onLogout, onProfileUpdate }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
 
@@ -61,7 +62,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ user, onLogout }) => {
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.greeting}>Xin chào {getUserDisplayName()}!</Text>
-            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile', { onLogout })}>
+            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile', { onLogout, onProfileUpdate })}>
               <Text style={styles.profileButtonText}>Xem hồ sơ</Text>
             </TouchableOpacity>
           </View>

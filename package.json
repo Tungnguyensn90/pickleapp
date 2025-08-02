@@ -13,6 +13,7 @@
     "pod:install": "cd ios && pod install && cd .."
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.1.8",
     "@hookform/resolvers": "^5.2.1",
     "@react-native-community/checkbox": "^0.5.20",
     "@react-native/new-app-screen": "0.80.2",
@@ -27,6 +28,7 @@
     "react-native-image-picker": "^8.2.1",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^14.0.0-rc.1",
+    "react-native-reanimated": "^3.6.1",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.13.1",
     "react-native-vector-icons": "^10.3.0",
