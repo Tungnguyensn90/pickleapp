@@ -124,6 +124,10 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleCancelEdit = () => {
+    setIsEditModalVisible(false);
+  };
+
   const handleLogoutPress = () => {
     setIsLogoutModalVisible(true);
   };
@@ -167,9 +171,11 @@ const ProfileScreen: React.FC = () => {
 
       if (result.assets && result.assets[0]) {
         setIsUpdating(true);
+        
         const response = await apiService.uploadAvatar(result.assets[0]);
         setUser(response.user);
-        setSuccessMessage('Cập nhật ảnh đại diện thành công');
+        setSuccessMessage('Tạo chibi avatar thành công!');
+        
         setIsSuccessModalVisible(true);
       }
     } catch (error: any) {
@@ -267,7 +273,7 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.avatarActions}>
             <TouchableOpacity style={styles.avatarAction} onPress={handleAvatarUpload} disabled={isUpdating}>
               <Icon name="photo-camera" size={16} color="#FF8C42" />
-              <Text style={styles.avatarActionText}>Thay đổi ảnh</Text>
+              <Text style={styles.avatarActionText}>Tạo chibi avatar</Text>
             </TouchableOpacity>
             {user?.avatar && (
               <TouchableOpacity style={styles.avatarAction} onPress={handleDeleteAvatarPress} disabled={isUpdating}>
@@ -368,11 +374,11 @@ const ProfileScreen: React.FC = () => {
         visible={isEditModalVisible}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => setIsEditModalVisible(false)}
+        onRequestClose={handleCancelEdit}
       >
         <LinearGradient colors={['#FF8C42', '#FFD700']} style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={() => setIsEditModalVisible(false)} style={styles.closeButton}>
+            <TouchableOpacity onPress={handleCancelEdit} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Hủy</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Chỉnh sửa hồ sơ</Text>
@@ -387,7 +393,7 @@ const ProfileScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.modalContent}>
+          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Tên</Text>
               <TextInput
@@ -784,39 +790,47 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
   },
   closeButton: {
+    paddingHorizontal: 15,
     paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   closeButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '600',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    flex: 1,
+    marginHorizontal: 20,
   },
   saveButton: {
+    paddingHorizontal: 20,
     paddingVertical: 8,
-    paddingHorizontal: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 8,
+    backgroundColor: '#008080',
   },
   saveButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   modalContent: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   inputGroup: {
     marginBottom: 20,
@@ -824,22 +838,26 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#FFFFFF',
     marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   textInput: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
     color: '#333',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   textArea: {
-    height: 100,
+    minHeight: 100,
     textAlignVertical: 'top',
+    paddingTop: 14,
   },
 });
 

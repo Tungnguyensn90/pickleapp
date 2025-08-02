@@ -27,13 +27,28 @@ const testConnection = async () => {
   }
 };
 
-// Initialize database tables
-const initDatabase = async () => {
+async function initDatabase() {
   try {
     const connection = await pool.getConnection();
-    
-    // Create users table
-    await connection.execute(`
+    console.log('✅ Database connection established');
+
+    // Drop existing tables in reverse order (due to foreign key constraints)
+    try {
+      await connection.execute('DROP TABLE IF EXISTS user_sessions');
+      console.log('✅ Dropped user_sessions table');
+    } catch (error) {
+      console.log('ℹ️ user_sessions table does not exist or could not be dropped');
+    }
+
+    try {
+      await connection.execute('DROP TABLE IF EXISTS users');
+      console.log('✅ Dropped users table');
+    } catch (error) {
+      console.log('ℹ️ users table does not exist or could not be dropped');
+    }
+
+    // Create users table first
+    const createUsersTable = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -42,17 +57,20 @@ const initDatabase = async () => {
         last_name VARCHAR(100),
         avatar VARCHAR(500),
         date_of_birth DATE,
-        location VARCHAR(255),
+        location VARCHAR(200),
         player_rank VARCHAR(50) DEFAULT 'Beginner',
         elo INT DEFAULT 1000,
         description TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
-    `);
+    `;
+
+    await connection.execute(createUsersTable);
+    console.log('✅ Users table created/verified');
 
     // Create user_sessions table for JWT token management
-    await connection.execute(`
+    const createUserSessionsTable = `
       CREATE TABLE IF NOT EXISTS user_sessions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
@@ -61,15 +79,18 @@ const initDatabase = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
-    `);
+    `;
+
+    await connection.execute(createUserSessionsTable);
+    console.log('✅ User sessions table created/verified');
 
     console.log('✅ Database tables initialized successfully');
     connection.release();
   } catch (error) {
-    console.error('❌ Database initialization failed:', error.message);
+    console.error('❌ Database initialization failed:', error);
     throw error;
   }
-};
+}
 
 module.exports = {
   pool,

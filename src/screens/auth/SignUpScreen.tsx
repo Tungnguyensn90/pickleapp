@@ -362,8 +362,8 @@ const styles = StyleSheet.create({
     paddingBottom: 40, // Add some padding at the bottom for the last element
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 240,
+    height: 240,
     alignSelf: 'center',
     marginBottom: 30,
     resizeMode: 'contain',

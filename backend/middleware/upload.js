@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const fsPromises = require('fs').promises;
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
@@ -8,7 +9,7 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer for file uploads
+// Configure storage for regular avatars
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
@@ -19,25 +20,49 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter to only allow images
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+// Configure storage for chibi avatars
+const chibiStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const chibiDir = path.join(uploadsDir, 'chibi');
+    if (!fs.existsSync(chibiDir)) {
+      fs.mkdirSync(chibiDir, { recursive: true });
+    }
+    cb(null, chibiDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'chibi-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
 
-  if (mimetype && extname) {
-    return cb(null, true);
+// File filter function
+const fileFilter = (req, file, cb) => {
+  // Check file type
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(new Error('Chỉ chấp nhận file hình ảnh!'), false);
   }
 };
 
+// Create multer instances
 const upload = multer({
   storage: storage,
+  fileFilter: fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024 // 5MB default
-  },
-  fileFilter: fileFilter
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
 });
 
-module.exports = upload; 
+const uploadChibi = multer({
+  storage: chibiStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit for chibi processing
+  }
+});
+
+module.exports = {
+  upload,
+  uploadChibi
+}; 
