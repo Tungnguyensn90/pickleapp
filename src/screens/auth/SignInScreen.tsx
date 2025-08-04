@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  ActivityIndicator,
-  ScrollView,
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    TextInput,
+    Image,
+    ActivityIndicator,
+    ScrollView,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import LinearGradient from 'react-native-linear-gradient';
@@ -16,13 +16,13 @@ import apiService from '../../services/api';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 interface FormData {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }
 
 interface SignInScreenProps {
-  onNavigateToSignUp: () => void;
-  onAuthenticate: (user: any) => void;
+    onNavigateToSignUp: () => void;
+    onAuthenticate: (user: any) => void;
 }
 
 const LoginScreen: React.FC<SignInScreenProps> = ({ onNavigateToSignUp, onAuthenticate }) => {
@@ -30,7 +30,7 @@ const LoginScreen: React.FC<SignInScreenProps> = ({ onNavigateToSignUp, onAuthen
     const [isLoading, setIsLoading] = useState(false);
     const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    
+
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
 
     const onSubmit = async (data: FormData) => {
@@ -57,7 +57,7 @@ const LoginScreen: React.FC<SignInScreenProps> = ({ onNavigateToSignUp, onAuthen
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
             />
-            
+
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
@@ -171,7 +171,7 @@ const LoginScreen: React.FC<SignInScreenProps> = ({ onNavigateToSignUp, onAuthen
                         <Image source={require('../../../assets/images/google.png')} style={styles.socialIcon} />
                         <Text style={styles.socialButtonText}>Google</Text>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity style={styles.socialButton}>
                         <Image source={require('../../../assets/images/facebook.png')} style={styles.socialIcon} />
                         <Text style={styles.socialButtonText}>Facebook</Text>

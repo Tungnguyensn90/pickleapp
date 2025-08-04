@@ -1,4 +1,15 @@
-const API_BASE_URL = 'http://10.0.2.2:3000/api';
+import { Platform } from 'react-native';
+
+// Use different base URLs for iOS and Android
+const getApiBaseUrl = () => {
+  if (Platform.OS === 'ios') {
+    return 'http://localhost:3000/api';
+  } else {
+    return 'http://10.0.2.2:3000/api';
+  }
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class ApiService {
   constructor() {
@@ -41,6 +52,7 @@ class ApiService {
     try {
       const url = `${this.baseURL}${endpoint}`;
       console.log('Making request to:', url);
+      console.log('Platform:', Platform.OS);
       
       const response = await fetch(url, {
         ...options,
